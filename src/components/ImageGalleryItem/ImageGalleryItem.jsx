@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { createPortal } from 'react-dom';
 import { Item, Image } from './ImageGalleryItem.styled';
 import { Modal } from '../Modal/Modal';
 import PropTypes from 'prop-types';
