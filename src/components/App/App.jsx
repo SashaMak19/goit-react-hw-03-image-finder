@@ -10,30 +10,17 @@ export class App extends Component {
   state = {
     query: null,
     images: [],
-    page: 0,
+    page: 1,
     isLoading: false,
-    isLoadingMore: false,
   };
 
   componentDidUpdate(_, prevState) {
     const { query, page } = this.state;
     console.log(page);
 
-    // if (query !== prevState.query) {
-    //   this.setState({
-    //     images: [],
-    //   });
-    // }
-
-    // ...prevState.images,
-    // || query !== prevState.query
-
     if (page !== prevState.page || query !== prevState.query) {
       this.setState({
         isLoading: true,
-        isLoadingMore: true,
-        // images: [],
-        // page: prevState.page + 1,
       });
 
       // console.log(prevState.images);
@@ -45,14 +32,13 @@ export class App extends Component {
           this.setState({ images: [...prevState.images, ...images] });
         })
         .catch(error => console.log(error))
-        .finally(() =>
-          this.setState({ isLoading: false, isLoadingMore: false })
-        );
+        .finally(() => this.setState({ isLoading: false }));
+      // document.body.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
 
   getQueryValue = value => {
-    this.setState({ query: value, page: 1 });
+    this.setState({ query: value, page: 1, images: [], isLoading: false });
     console.log('getQueryValue');
   };
 
@@ -62,17 +48,15 @@ export class App extends Component {
   };
 
   render() {
-    const { images, isLoading, isLoadingMore, page } = this.state;
+    const { images, isLoading, page } = this.state;
 
     return (
       <Container>
         <SearchBar onSubmit={this.getQueryValue} />
         {isLoading && <Loader />}
         {!isLoading && <ImageGallery data={images} />}
-        {isLoadingMore && page > 1 && <Loader />}
-        {!isLoadingMore && !isLoading && images.length > 0 && (
-          <LoadMore onLoad={this.onLoad} />
-        )}
+        {/* {page > 1 && <Loader />} */}
+        {!isLoading && images.length > 0 && <LoadMore onLoad={this.onLoad} />}
       </Container>
     );
   }
