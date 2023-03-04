@@ -8,45 +8,57 @@ import { Container } from './App.styled';
 
 export class App extends Component {
   state = {
-    inputValue: null,
+    query: null,
     images: [],
-    page: 1,
+    page: 0,
     isLoading: false,
     isLoadingMore: false,
   };
 
   componentDidUpdate(_, prevState) {
-    const { inputValue, page } = this.state;
+    const { query, page } = this.state;
+    console.log(page);
 
-    if (prevState.inputValue !== inputValue) {
-      this.setState({ isLoading: true });
+    // if (query !== prevState.query) {
+    //   this.setState({
+    //     images: [],
+    //   });
+    // }
 
-      fetchData(inputValue, page)
-        .then(cards => this.setState({ images: [...cards] }))
+    // ...prevState.images,
+    // || query !== prevState.query
+
+    if (page !== prevState.page || query !== prevState.query) {
+      this.setState({
+        isLoading: true,
+        isLoadingMore: true,
+        // images: [],
+        // page: prevState.page + 1,
+      });
+
+      // console.log(prevState.images);
+
+      fetchData(query, page)
+        .then(images => {
+          console.log(`Попередні`, prevState.images);
+          console.log(`Ті що прийшли`, images);
+          this.setState({ images: [...prevState.images, ...images] });
+        })
         .catch(error => console.log(error))
-        .finally(() => this.setState({ isLoading: false }));
-    }
-
-    if (page !== prevState.page) {
-      this.setState({ isLoadingMore: true });
-
-      fetchData(inputValue, page)
-        .then(cards =>
-          this.setState(prevState => ({
-            images: [...prevState.images, ...cards],
-          }))
-        )
-        .catch(error => console.log(error))
-        .finally(() => this.setState({ isLoadingMore: false }));
+        .finally(() =>
+          this.setState({ isLoading: false, isLoadingMore: false })
+        );
     }
   }
 
-  getInputValue = value => {
-    this.setState({ inputValue: value, page: 1 });
+  getQueryValue = value => {
+    this.setState({ query: value, page: 1 });
+    console.log('getQueryValue');
   };
 
   onLoad = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
+    console.log('onLoad');
   };
 
   render() {
@@ -54,9 +66,9 @@ export class App extends Component {
 
     return (
       <Container>
-        <SearchBar onSubmit={this.getInputValue} />
+        <SearchBar onSubmit={this.getQueryValue} />
         {isLoading && <Loader />}
-        {!isLoading && <ImageGallery data={this.state.images} />}
+        {!isLoading && <ImageGallery data={images} />}
         {isLoadingMore && page > 1 && <Loader />}
         {!isLoadingMore && !isLoading && images.length > 0 && (
           <LoadMore onLoad={this.onLoad} />

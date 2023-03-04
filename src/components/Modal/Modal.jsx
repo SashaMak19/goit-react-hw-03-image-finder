@@ -8,14 +8,10 @@ const modalRoot = document.querySelector('#modal-root');
 class Modal extends Component {
   componentDidMount() {
     window.addEventListener('keydown', this.onCloseModalByEsc);
-    window.addEventListener('click', this.onCloseModalByBackdrop);
-    console.log('DidMount');
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.onCloseModalByEsc);
-    window.removeEventListener('click', this.onCloseModalByBackdrop);
-    console.log('WillUnmount');
   }
 
   onCloseModalByEsc = e => {
@@ -25,26 +21,19 @@ class Modal extends Component {
   };
 
   onCloseModalByBackdrop = e => {
-    if (e.target.nodeName !== 'IMG') {
+    if (e.currentTarget === e.target) {
       this.props.onClose();
     }
+    console.log(e);
+    console.log(e.target);
+    console.log(e.currentTarget);
   };
-
-  // onCloseModalByBackdrop = e => {
-  //   if (e.currentTarget === e.target) {
-  //     this.props.onClose();
-  //   }
-  //   console.log(e);
-  //   console.log(e.target);
-  //   console.log(e.currentTarget);
-  // };
 
   render() {
     const { image, tags } = this.props;
 
     return createPortal(
-      // onClick={this.onCloseModalByBackdrop}
-      <Overlay>
+      <Overlay onClick={this.onCloseModalByBackdrop}>
         <ModalStyled>
           <img src={image} alt={tags} />
         </ModalStyled>
