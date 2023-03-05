@@ -9,7 +9,7 @@ async function fetchData(query, page) {
       `${BASE_URL}?q=${query}&page=${page}&key=${KEY_TO_PIXABAY}&image_type=photo&orientation=horizontal&per_page=12`
     );
 
-    return response.data.hits;
+    return response.data;
   } catch (error) {
     console.error(error);
   }
